@@ -1,0 +1,8 @@
+# Python environment & bytecode
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# Jupyter Checkpoints
+.ipynb_checkpoints/

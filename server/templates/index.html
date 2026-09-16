@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bengaluru House Price Prediction</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(to bottom, #29b6f6, #0288d1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            width: 320px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h3 {
+            color: #111;
+            margin-bottom: 6px;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .input-text {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            background: #fff;
+            text-align: left;
+        }
+
+        /* Segmented Radio Buttons Styling */
+        .switch-field {
+            display: flex;
+            overflow: hidden;
+            border-radius: 4px;
+            background: #e0e0e0;
+        }
+
+        .switch-field input {
+            position: absolute !important;
+            clip: rect(0, 0, 0, 0);
+            height: 1px;
+            width: 1px;
+            border: 0;
+            overflow: hidden;
+        }
+
+        .switch-field label {
+            background-color: #fff;
+            color: #555;
+            font-size: 14px;
+            line-height: 1;
+            text-align: center;
+            padding: 10px 0;
+            flex: 1;
+            border-right: 1px solid #ddd;
+            cursor: pointer;
+            transition: all 0.1s ease-in-out;
+        }
+
+        .switch-field label:last-child {
+            border-right: none;
+        }
+
+        /* Highlight selected option in green */
+        .switch-field input:checked + label {
+            background-color: #aed581;
+            color: #1b5e20;
+            font-weight: bold;
+        }
+
+        /* Custom Dropdown Styling */
+        select.input-text {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: #fff url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 8px center;
+            background-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Submit Button and Result Box Styling */
+        .btn-estimate {
+            width: 100%;
+            background-color: #aed581;
+            color: #2e7d32;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            margin-top: 25px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-estimate:hover {
+            background-color: #9ccc65;
+        }
+
+        .result-box {
+            width: 100%;
+            background-color: #fff9c4;
+            color: #000;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-top: 25px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <form action="/predict" method="post">
+
+            <!-- Area Input -->
+            <h3>Area (Square Feet)</h3>
+            <input type="number" step="any" name="sqft" class="input-text" placeholder="1000" value="{{ sqft }}" required>
+
+            <!-- BHK Selection -->
+            <h3>BHK</h3>
+            <div class="switch-field">
+                <input type="radio" id="bhk-1" name="bhk" value="1" required {% if bhk == '1' %}checked{% endif %}>
+                <label for="bhk-1">1</label>
+
+                <input type="radio" id="bhk-2" name="bhk" value="2" {% if bhk == '2' %}checked{% endif %}>
+                <label for="bhk-2">2</label>
+
+                <input type="radio" id="bhk-3" name="bhk" value="3" {% if bhk == '3' %}checked{% endif %}>
+                <label for="bhk-3">3</label>
+
+                <input type="radio" id="bhk-4" name="bhk" value="4" {% if bhk == '4' %}checked{% endif %}>
+                <label for="bhk-4">4</label>
+
+                <input type="radio" id="bhk-5" name="bhk" value="5" {% if bhk == '5' %}checked{% endif %}>
+                <label for="bhk-5">5</label>
+            </div>
+
+            <!-- Bath Selection -->
+            <h3>Bath</h3>
+            <div class="switch-field">
+                <input type="radio" id="bath-1" name="bath" value="1" required {% if bath == '1' %}checked{% endif %}>
+                <label for="bath-1">1</label>
+
+                <input type="radio" id="bath-2" name="bath" value="2" {% if bath == '2' %}checked{% endif %}>
+                <label for="bath-2">2</label>
+
+                <input type="radio" id="bath-3" name="bath" value="3" {% if bath == '3' %}checked{% endif %}>
+                <label for="bath-3">3</label>
+
+                <input type="radio" id="bath-4" name="bath" value="4" {% if bath == '4' %}checked{% endif %}>
+                <label for="bath-4">4</label>
+
+                <input type="radio" id="bath-5" name="bath" value="5" {% if bath == '5' %}checked{% endif %}>
+                <label for="bath-5">5</label>
+            </div>
+
+            <!-- Location Dropdown -->
+            <h3>Location</h3>
+            <select name="location" class="input-text" required>
+                <option value="" disabled {% if not selected_location %}selected{% endif %}>Choose a Location</option>
+                {% for loc in locations %}
+                    <option value="{{ loc }}" {% if loc == selected_location %}selected{% endif %}>{{ loc.lower() }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-estimate">Estimate Price</button>
+
+        </form>
+
+        <!-- Prediction Result -->
+        {% if prediction_text %}
+            <div class="result-box">
+                {{ prediction_text }}
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
